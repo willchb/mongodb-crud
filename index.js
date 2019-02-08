@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 exports.createConnector = ({
   username = process.env.DBUSER,
@@ -10,3 +10,14 @@ exports.createConnector = ({
   client = new MongoClient(url, Object.assign({ useNewUrlParser: true }, options)),
 } = {}, conn = null) => async () => await client.isConnected() ? conn : conn = await client.connect();
 
+exports.createCRUD = exports.createCrud = (connector, database, collection) => {
+  const conn = async () => (await connector()).db(database).collection(collection);
+
+  const insertOne = async (...args) => (await conn()).insertOne(...args);
+
+  return {
+    async create(document) {
+      return await insertOne(document), document._id;
+    },
+  };
+};

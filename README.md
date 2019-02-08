@@ -12,6 +12,9 @@ An easy to use [CRUD] for [MongoDB].
 This package provides methods to [create], [read], [update] and [delete]
 documents in a [MongoDB] database.
 
+In short, you [create a connector] and use it to [create a crud] for a specific [database] and [collection]. Then you call any of the four methods of the crud
+you created to perform any of the four [CRUD] operations.
+
 <h2 id="create-a-connector">
   Create a connector
 </h2>
@@ -110,6 +113,57 @@ const conn = await connector();
 await conn.db('admin').addUser('newuser', 's3cr3t');
 ```
 
+<h2 id="create-a-crud">
+  Create a CRUD
+</h2>
+
+Once you have a connector, you need to create a crud, which is just a plain
+object with these methods: [create], [read], [update], [delete].
+
+A crud only operates on one [collection]. That means you need to create a crud
+for each [collection] you want to [create] documents in, [read] documents from,
+[update/save] documents to, and [delete] documents from.
+
+
+```js
+const { createConnector, createCRUD } = require('mongodb-crud');
+
+const connector = createConnector({ url: 'mongodb://user:pass@host:port' });
+
+// this crud has methods create, read, update and delete, for operating
+// on the 'users' collection of the 'my-app-db' database
+const usersCRUD = createCRUD(connector, 'my-app-db', 'users');
+
+// this crud has methods create, read, update and delete, for operating
+// on the 'orders' collection of the 'my-app-db' database
+const ordersCRUD = createCRUD(connector, 'my-app-db', 'orders');
+```
+
+<h2 id="create-a-document">
+  Create a document
+</h2>
+
+Once you have [a crud] for your [database] and [collection], you just need to
+call the method `create` with a plain object representing the document you
+want to add to the [collection].
+
+The create operation changes the document by adding an `_id` property to it.
+The value of that property is the auto generated `_id` — the primary key in
+[MongoDB] collections. It also returns that `_id`. The `_id` is an [ObjectId]
+that can be converted to a [String] representation via the method `toString`.
+
+```js
+// create a document
+const document = {
+  username: 'john',
+  password: 'secret',
+  name: 'John Bart',
+  email: 'john@example.com',
+};
+// _id is auto-generated and set to the document by the connector
+const _id = await usersCRUD.create(document);
+```
+
 ## Maintainer
 
 | [![willchb-avatar]][willchb] |
@@ -128,9 +182,17 @@ await conn.db('admin').addUser('newuser', 's3cr3t');
 [CRUD]: https://en.wikipedia.org/wiki/Create,_read,_update_and_delete
 [MongoDB]: https://www.mongodb.com/
 [Connection String]: https://docs.mongodb.com/manual/reference/connection-string/
+[ObjectId]: https://docs.mongodb.com/manual/reference/method/ObjectId/
+[database]: https://docs.mongodb.com/manual/core/databases-and-collections/#databases
+[collection]: https://docs.mongodb.com/manual/core/databases-and-collections/#collections
+[String]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
 
 <!-- Internal references -->
+[Create a CRUD]: #create-a-crud
+[a crud]: #create-a-crud
+[Create a connector]: #create-a-connector
 [create]: #create-a-document
 [read]: #read-a-document
 [update]: #update-a-document
+[update/save]: #update-a-document
 [delete]: #delete-a-document

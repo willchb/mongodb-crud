@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha');
 const { expect } = require('chai');
 const { MongoClient } = require('mongodb');
-const { createConnector } = require('./index');
+const { createConnector, createCRUD } = require('./index');
 
 describe('createConnector', () => {
 
@@ -161,3 +161,32 @@ describe('createConnector', () => {
   });
 });
 
+describe('createCRUD', () => {
+  const connector = createConnector();
+
+  before(async () => {
+    await connector();
+  });
+
+  const crud = createCRUD(connector, 'test', 'test');
+
+  it('returns an object of CRUD functions', () => {
+    expect(crud).to.have.property('create').that.is.a('function');
+  });
+
+  it('creates a document', async () => {
+    const doc = {
+      propA: 'prop A of document',
+      propB: 'prop B of document',
+    };
+    const _id = await crud.create(doc);
+
+    expect(doc).to.have.property('_id');
+    expect(doc._id.toString()).to.match(/^[0-9a-f]{24}$/);
+    expect(doc._id).to.equal(_id);
+  });
+
+  after(async () => {
+    (await connector()).close();
+  });
+});
