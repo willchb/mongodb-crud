@@ -1,6 +1,6 @@
 {
   "name": "mongodb-crud",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An easy to use CRUD for MongoDB",
   "main": "index.js",
   "files": [

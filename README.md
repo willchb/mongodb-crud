@@ -1,5 +1,6 @@
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
+[![license][license]][license-url]
 
 # mongodb-crud
 
@@ -319,6 +320,8 @@ await crud.delete(_id);
 [npm-url]: https://npmjs.com/package/mongodb-crud
 [node]: https://img.shields.io/node/v/mongodb-crud.svg
 [node-url]: https://nodejs.org
+[license]: https://img.shields.io/npm/l/mongodb-crud.svg
+[license-url]: https://gitlab.com/midion/mongodb-crud/raw/master/LICENSE.md
 [willchb]: https://github.com/willchb
 [willchb-avatar]: https://avatars1.githubusercontent.com/u/16672319?v=3&s=150
 
