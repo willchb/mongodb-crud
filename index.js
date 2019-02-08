@@ -19,6 +19,8 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
   const replaceOne = async (...args) => (await conn()).replaceOne(...args);
   const updateOne = async (...args) => (await conn()).updateOne(...args);
   const updateMany = async (...args) => (await conn()).updateMany(...args);
+  const deleteOne = async (...args) => (await conn()).deleteOne(...args);
+  const deleteMany = async (...args) => (await conn()).deleteMany(...args);
 
   return {
     async create(document) {
@@ -53,5 +55,18 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
 
       return (await op(...args)).modifiedCount;
     },
+    async delete(queryOrDocOrId) {
+      let op, args;
+
+      if (typeof queryOrDocOrId === 'string' || queryOrDocOrId instanceof ObjectId || queryOrDocOrId._id) {
+        op = deleteOne;
+        args = [{ _id: ObjectId(queryOrDocOrId._id || queryOrDocOrId) }];
+      } else {
+        op = deleteMany;
+        args = [queryOrDocOrId];
+      }
+
+      return (await op(...args)).deletedCount;
+    }
   };
 };

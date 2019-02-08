@@ -238,6 +238,35 @@ const modifiedCount = await usersCRUD.update(
 );
 ```
 
+<h2 id="delete-a-document">
+  Delete a document
+</h2>
+
+You have [a crud] for your [database] and [collection], then you could delete a
+document from that [collection] by calling the method `delete` with the
+document or the document's `_id`.
+
+The delete operation returns the number of deleted documents.
+
+```js
+// get a document
+const document = await crud.read('507f191e810c19729de860ea');
+// delete the document
+const deletedCount = await crud.delete(document);
+```
+
+```js
+// delete a document by id
+const deletedCount = await crud.delete('507f191e810c19729de860ea');
+```
+
+You could also delete multiple documents by a certain criteria.
+
+```js
+// delete all users named 'John'
+const deletedCount = await usersCRUD.delete({ name: 'John' });
+```
+
 ## Maintainer
 
 | [![willchb-avatar]][willchb] |

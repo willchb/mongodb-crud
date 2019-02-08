@@ -174,6 +174,7 @@ describe('createCRUD', () => {
     expect(crud).to.have.property('create').that.is.a('function');
     expect(crud).to.have.property('read').that.is.a('function');
     expect(crud).to.have.property('update').that.is.a('function');
+    expect(crud).to.have.property('delete').that.is.a('function');
   });
 
   let _id;
@@ -240,6 +241,15 @@ describe('createCRUD', () => {
     });
   });
 
+  it('deletes the document', async () => {
+    const count = await crud.delete(`${_id}`);
+
+    expect(count).to.equal(1);
+    expect(await crud.read(`${_id}`)).to.be.null;
+  });
+
+  let uid;
+
   it('creates a bunch of documents, then reads some of them in reverse order', async () => {
     const timestamp = new Date().getTime();
     const randNumber = Math.round(Math.random() * 1000000);
@@ -285,6 +295,13 @@ describe('createCRUD', () => {
         propB: `prop B of document ${c}`,
         propC: 'prop C of document',
       })));
+  });
+
+  it('deletes a bunch of documents', async () => {
+    const count = await crud.delete({ uid });
+
+    expect(count).to.equals(8);
+    expect(await crud.read({ uid })).to.be.an('array').that.is.empty;
   });
 
   after(async () => {
