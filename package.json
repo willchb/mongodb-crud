@@ -1,5 +1,5 @@
 {
-  "name": "mongodb-crud",
+  "name": "@midion/mongodb-crud",
   "version": "1.0.0",
   "description": "An easy to use CRUD for MongoDB",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/willchb/mongodb-crud"
+    "url": "https://gitlab.com/midion/mongodb-crud"
   },
   "keywords": [
     "mongodb",
@@ -24,9 +24,9 @@
   "author": "Willian Balmant",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/willchb/mongodb-crud/issues"
+    "url": "https://gitlab.com/midion/mongodb-crud/issues"
   },
-  "homepage": "https://github.com/willchb/mongodb-crud#readme",
+  "homepage": "https://gitlab.com/midion/mongodb-crud#readme",
   "dependencies": {
     "mongodb": "^3.1.13"
   },

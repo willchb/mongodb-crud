@@ -315,9 +315,9 @@ await crud.delete(_id);
 
 
 <!-- External references -->
-[npm]: https://img.shields.io/npm/v/mongodb-crud.svg
-[npm-url]: https://npmjs.com/package/mongodb-crud
-[node]: https://img.shields.io/node/v/mongodb-crud.svg
+[npm]: https://img.shields.io/npm/v/@midion/mongodb-crud.svg
+[npm-url]: https://npmjs.com/package/@midion/mongodb-crud
+[node]: https://img.shields.io/node/v/@midion/mongodb-crud.svg
 [node-url]: https://nodejs.org
 [willchb]: https://github.com/willchb
 [willchb-avatar]: https://avatars1.githubusercontent.com/u/16672319?v=3&s=150
