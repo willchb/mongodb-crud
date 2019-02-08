@@ -5,6 +5,13 @@
 
 An easy to use [CRUD] for [MongoDB].
 
+
+> ## TL;DR
+>
+> If you're in a rush to start using this package, or just need a quick sample
+> code to start, jump to the [Complete sample] section. If after looking at the
+> [complete sample] you still have questions, then read this whole document.
+
 <h2 id="introduction">
   Introduction
 </h2>
@@ -267,6 +274,39 @@ You could also delete multiple documents by a certain criteria.
 const deletedCount = await usersCRUD.delete({ name: 'John' });
 ```
 
+<h2 id="complete-sample">
+  Complete sample
+</h2>
+
+Create a document in the `users` collection of the `my-app-db` database. Then
+obtain it, modify it, save it, and finally delete it from the database.
+
+```js
+const { createConnector, createCRUD } = require('mongodb-crud');
+const connector = createConnector({ url: 'mongodb://user:pass@host:port' });
+const crud = createCRUD(connector, 'my-app-db', 'users');
+
+// create a document
+const _id = await crud.create({
+  username: 'john',
+  password: 'secret',
+  name: 'John Bart',
+  email: 'john@example.com',
+});
+
+// read the document
+const document = await crud.read(_id);
+
+// modify the document
+document.password = 's3cRet';
+
+// save the document
+await crud.update(document);
+
+// delete the document
+await crud.delete(_id);
+```
+
 ## Maintainer
 
 | [![willchb-avatar]][willchb] |
@@ -299,3 +339,4 @@ const deletedCount = await usersCRUD.delete({ name: 'John' });
 [update]: #update-a-document
 [update/save]: #update-a-document
 [delete]: #delete-a-document
+[Complete sample]: #complete-sample
