@@ -173,6 +173,7 @@ describe('createCRUD', () => {
   it('returns an object of CRUD functions', () => {
     expect(crud).to.have.property('create').that.is.a('function');
     expect(crud).to.have.property('read').that.is.a('function');
+    expect(crud).to.have.property('update').that.is.a('function');
   });
 
   let _id;
@@ -209,11 +210,41 @@ describe('createCRUD', () => {
     });
   });
 
+  it('updates the document', async () => {
+    const count = await crud.update({
+      _id,
+      propA: 'prop A of document modified',
+      propB: 'prop B of document',
+    });
+
+    expect(count).to.equal(1);
+    expect(await crud.read(`${_id}`)).to.deep.equal({
+      _id,
+      propA: 'prop A of document modified',
+      propB: 'prop B of document',
+    });
+  });
+
+  it('updates part of the document', async () => {
+    const count = await crud.update(_id, {
+      propB: 'prop B of document modified',
+      propC: 'prop C of document',
+    });
+
+    expect(count).to.equal(1);
+    expect(await crud.read(`${_id}`)).to.deep.equal({
+      _id,
+      propA: 'prop A of document modified',
+      propB: 'prop B of document modified',
+      propC: 'prop C of document',
+    });
+  });
+
   it('creates a bunch of documents, then reads some of them in reverse order', async () => {
     const timestamp = new Date().getTime();
     const randNumber = Math.round(Math.random() * 1000000);
 
-    const uid = `${timestamp}-${randNumber}`;
+    uid = `${timestamp}-${randNumber}`;
 
     const docs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map(c => ({
       uid,
@@ -231,6 +262,29 @@ describe('createCRUD', () => {
       .that.has.deep.ordered.members(docs.slice(1, -1).reverse())
       .but.not.deep.include(docs[0])
       .and.not.deep.include(docs[docs.length - 1]);
+  });
+
+  it('updates a bunch of documents', async() => {
+    const count = await crud.update({ uid }, {
+      uid: uid + 1,
+      propA: 'prop A of document',
+      propC: 'prop C of document',
+    });
+
+    expect(count).to.equal(8);
+
+    uid = uid + 1;
+
+    const actualDocs = await crud.read({ uid }, { sort: { propA: 1 } });
+
+    expect(actualDocs).to.be.an('array')
+      .that.has.deep.ordered.members(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((c, i) => ({
+        _id: actualDocs[i]._id,
+        uid,
+        propA: 'prop A of document',
+        propB: `prop B of document ${c}`,
+        propC: 'prop C of document',
+      })));
   });
 
   after(async () => {

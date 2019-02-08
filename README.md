@@ -199,6 +199,45 @@ const documents = await crud.read({}, {
 });
 ```
 
+<h2 id="update-a-document">
+  Update a document
+</h2>
+
+If you need to update a document in a [collection], get [a crud] for that
+[collection], then [read] the document by `_id`, change it, and call `update`
+with the amended document.
+
+The update operation returns the number of modified documents.
+
+```js
+const document = await crud.read('507f191e810c19729de860ea');
+
+document.password = 's3cRet';
+
+// replace document which _id is 507f191e810c19729de860ea
+const modifiedCount = await crud.update(document);
+```
+
+A more efficient way of doing the same as above would be to update only the password, rather than replacing the whole document.
+
+```js
+// update the password of the document which _id is 507f191e810c19729de860ea
+const modifiedCount = await usersCRUD.update('507f191e810c19729de860ea', {
+  password: 's3cRet',
+});
+```
+
+It's also possible to update one or more fields of multiple documents matching a
+certain criteria, all at once.
+
+```js
+// update the password of all users named 'John'
+const modifiedCount = await usersCRUD.update(
+  { name: 'John' }, // criteria
+  { password: "john's secret" } // props and values to update
+);
+```
+
 ## Maintainer
 
 | [![willchb-avatar]][willchb] |

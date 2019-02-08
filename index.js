@@ -16,6 +16,9 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
   const insertOne = async (...args) => (await conn()).insertOne(...args);
   const findOne = async (...args) => (await conn()).findOne(...args);
   const findToArray = async (...args) => (await conn()).find(...args).toArray();
+  const replaceOne = async (...args) => (await conn()).replaceOne(...args);
+  const updateOne = async (...args) => (await conn()).updateOne(...args);
+  const updateMany = async (...args) => (await conn()).updateMany(...args);
 
   return {
     async create(document) {
@@ -33,6 +36,22 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
       }
 
       return op(...args);
+    },
+    async update(queryOrDocOrId, docFragment = queryOrDocOrId) {
+      let op, args;
+
+      if (docFragment === queryOrDocOrId) {
+        op = replaceOne;
+        args = [{ _id: ObjectId(queryOrDocOrId._id) }, docFragment];
+      } else if (typeof queryOrDocOrId === 'string' || queryOrDocOrId instanceof ObjectId || queryOrDocOrId._id) {
+        op = updateOne;
+        args = [{ _id: ObjectId(queryOrDocOrId._id || queryOrDocOrId) }, { $set: docFragment }];
+      } else {
+        op = updateMany;
+        args = [queryOrDocOrId, { $set: docFragment }];
+      }
+
+      return (await op(...args)).modifiedCount;
     },
   };
 };
