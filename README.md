@@ -164,6 +164,41 @@ const document = {
 const _id = await usersCRUD.create(document);
 ```
 
+<h2 id="read-a-document">
+  Read a document
+</h2>
+
+Assuming you have [a crud] for your [database] and [collection], you obtain a
+document from that [collection] by calling the method `read` with the
+document's `_id`.
+
+```js
+// get document by _id
+const document = await usersCRUD.read('507f191e810c19729de860ea');
+```
+
+You could also obtain documents by a criteria. This retrieves all users with
+email `'john@example.com'`:
+
+```js
+// get documents by email
+const documents = await usersCRUD.read({
+  email: 'john@example.com',
+});
+```
+
+It's also possible to skip the first N documents, to limit the number of
+results, and even sort the results by certain fields:
+
+```js
+// get all documents from 11th to 20th sorted by name
+const documents = await crud.read({}, {
+  skip: 10,
+  limit: 10,
+  sort: { name: 1 },
+});
+```
+
 ## Maintainer
 
 | [![willchb-avatar]][willchb] |

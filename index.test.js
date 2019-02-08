@@ -172,18 +172,65 @@ describe('createCRUD', () => {
 
   it('returns an object of CRUD functions', () => {
     expect(crud).to.have.property('create').that.is.a('function');
+    expect(crud).to.have.property('read').that.is.a('function');
   });
+
+  let _id;
 
   it('creates a document', async () => {
     const doc = {
       propA: 'prop A of document',
       propB: 'prop B of document',
     };
-    const _id = await crud.create(doc);
+    _id = await crud.create(doc);
 
     expect(doc).to.have.property('_id');
     expect(doc._id.toString()).to.match(/^[0-9a-f]{24}$/);
     expect(doc._id).to.equal(_id);
+  });
+
+  it('reads the document', async () => {
+    const actualDoc = await crud.read(`${_id}`);
+
+    expect(actualDoc).to.deep.equal({
+      _id,
+      propA: 'prop A of document',
+      propB: 'prop B of document',
+    });
+  });
+
+  it('reads the document querying by propA', async () => {
+    const actualDocs = await crud.read({ propA: 'prop A of document'});
+
+    expect(actualDocs).to.be.an('array').that.deep.includes({
+      _id,
+      propA: 'prop A of document',
+      propB: 'prop B of document',
+    });
+  });
+
+  it('creates a bunch of documents, then reads some of them in reverse order', async () => {
+    const timestamp = new Date().getTime();
+    const randNumber = Math.round(Math.random() * 1000000);
+
+    const uid = `${timestamp}-${randNumber}`;
+
+    const docs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map(c => ({
+      uid,
+      propA: `prop A of document ${c}`,
+      propB: `prop B of document ${c}`,
+    }));
+
+    for (const doc of docs) {
+      await crud.create(doc);
+    }
+
+    const actualDocs = await crud.read({ uid }, { skip: 1, limit: docs.length - 2, sort: { propB: -1 } });
+
+    expect(actualDocs).to.be.an('array')
+      .that.has.deep.ordered.members(docs.slice(1, -1).reverse())
+      .but.not.deep.include(docs[0])
+      .and.not.deep.include(docs[docs.length - 1]);
   });
 
   after(async () => {

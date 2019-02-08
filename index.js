@@ -14,10 +14,25 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
   const conn = async () => (await connector()).db(database).collection(collection);
 
   const insertOne = async (...args) => (await conn()).insertOne(...args);
+  const findOne = async (...args) => (await conn()).findOne(...args);
+  const findToArray = async (...args) => (await conn()).find(...args).toArray();
 
   return {
     async create(document) {
       return await insertOne(document), document._id;
+    },
+    async read(queryOrDocId, { skip = 0, limit = 100, sort } = {}) {
+      let op, args;
+
+      if (typeof queryOrDocId === 'string' || queryOrDocId instanceof ObjectId || queryOrDocId._id) {
+        op = findOne;
+        args = [{ _id: ObjectId(queryOrDocId._id || queryOrDocId) }];
+      } else {
+        op = findToArray;
+        args = [queryOrDocId, { skip, limit, sort }];
+      }
+
+      return op(...args);
     },
   };
 };
