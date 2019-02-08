@@ -1,0 +1,40 @@
+{
+  "name": "mongodb-crud",
+  "version": "1.0.0",
+  "description": "An easy to use CRUD for MongoDB",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "test": "mocha index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willchb/mongodb-crud"
+  },
+  "keywords": [
+    "mongodb",
+    "crud",
+    "create",
+    "read",
+    "update",
+    "delete"
+  ],
+  "author": "Willian Balmant",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/willchb/mongodb-crud/issues"
+  },
+  "homepage": "https://github.com/willchb/mongodb-crud#readme",
+  "dependencies": {
+    "mongodb": "^3.1.13"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=7.10.1"
+  }
+}
