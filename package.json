@@ -7,7 +7,7 @@
     "index.js"
   ],
   "scripts": {
-    "test": "nyc mocha index.test.js"
+    "test": "nyc mocha --colors *.test.js"
   },
   "repository": {
     "type": "git",
