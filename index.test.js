@@ -201,6 +201,12 @@ describe('createCRUD', () => {
     });
   });
 
+  it('reads documents when no argument is given', async () => {
+    const actualDoc = await crud.read();
+
+    expect(actualDoc).to.be.a('array');
+  });
+
   it('reads the document querying by propA', async () => {
     const actualDocs = await crud.read({ propA: 'prop A of document'});
 

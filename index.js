@@ -26,7 +26,7 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
     async create(document) {
       return await insertOne(document), document._id;
     },
-    async read(queryOrDocId, { skip = 0, limit = 100, sort } = {}) {
+    async read(queryOrDocId = {}, { skip = 0, limit = 100, sort } = {}) {
       let op, args;
 
       if (typeof queryOrDocId === 'string' || queryOrDocId instanceof ObjectId || queryOrDocId._id) {
