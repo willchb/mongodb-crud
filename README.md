@@ -44,7 +44,7 @@ either:
 
     ```js
     const connector = createConnector({
-      url: 'mongodb://user:pass@host:port',
+      url: 'mongodb://user:pass@host:port/database',
     });
     ```
 
@@ -104,6 +104,20 @@ Here's how you could set them:
 
   - an environment variable `DBPASS`
 
+- **database**: by default it's `'admin'`. It's ignored if username isn't
+  given. If you need a username that is not in the `'admin'` database, provide
+  either:
+
+  - a `database` property in the options object:
+
+    ```js
+    const connector = createConnector({
+      database: 'database-where-user-belongs',
+    });
+    ```
+
+  - an environment variable `DBNAME`
+
 
 ### Getting a persistent connection
 
@@ -144,7 +158,20 @@ const usersCRUD = createCRUD(connector, 'my-app-db', 'users');
 
 // this crud has methods create, read, update and delete, for operating
 // on the 'orders' collection of the 'my-app-db' database
-const ordersCRUD = createCRUD(connector, 'my-app-db', 'orders');
+const ordersCRUD = createCRUD({
+  collection: 'orders',
+  connector,
+  database: 'my-app-db',
+});
+```
+
+If you set the environment variables `DBUSER`, `DBPASS`, `DBNAME`, `DBHOST` and
+`DBPORT`, or if you don't and the default values for them work for you,
+creating a crud could be as simple as in the below code snippet:
+
+```js
+const { createCRUD } = require('mongodb-crud');
+const crud = createCRUD({ collection: 'users' });
 ```
 
 <h2 id="create-a-document">
@@ -169,7 +196,7 @@ const document = {
   email: 'john@example.com',
 };
 // _id is auto-generated and set to the document by the connector
-const _id = await usersCRUD.create(document);
+const _id = await crud.create(document);
 ```
 
 <h2 id="read-a-document">
@@ -182,7 +209,7 @@ document's `_id`.
 
 ```js
 // get document by _id
-const document = await usersCRUD.read('507f191e810c19729de860ea');
+const document = await crud.read('507f191e810c19729de860ea');
 ```
 
 You could also obtain documents by a criteria. This retrieves all users with
@@ -190,7 +217,7 @@ email `'john@example.com'`:
 
 ```js
 // get documents by email
-const documents = await usersCRUD.read({
+const documents = await crud.read({
   email: 'john@example.com',
 });
 ```
@@ -230,7 +257,7 @@ A more efficient way of doing the same as above would be to update only the pass
 
 ```js
 // update the password of the document which _id is 507f191e810c19729de860ea
-const modifiedCount = await usersCRUD.update('507f191e810c19729de860ea', {
+const modifiedCount = await crud.update('507f191e810c19729de860ea', {
   password: 's3cRet',
 });
 ```
@@ -240,7 +267,7 @@ certain criteria, all at once.
 
 ```js
 // update the password of all users named 'John'
-const modifiedCount = await usersCRUD.update(
+const modifiedCount = await crud.update(
   { name: 'John' }, // criteria
   { password: "john's secret" } // props and values to update
 );
@@ -272,7 +299,7 @@ You could also delete multiple documents by a certain criteria.
 
 ```js
 // delete all users named 'John'
-const deletedCount = await usersCRUD.delete({ name: 'John' });
+const deletedCount = await crud.delete({ name: 'John' });
 ```
 
 <h2 id="complete-sample">
@@ -284,7 +311,7 @@ obtain it, modify it, save it, and finally delete it from the database.
 
 ```js
 const { createConnector, createCRUD } = require('mongodb-crud');
-const connector = createConnector({ url: 'mongodb://user:pass@host:port' });
+const connector = createConnector({ url: 'mongodb://user:pass@host:port/database' });
 const crud = createCRUD(connector, 'my-app-db', 'users');
 
 // create a document

@@ -1,7 +1,28 @@
 const { describe, it } = require('mocha');
 const { expect } = require('chai');
 const { MongoClient } = require('mongodb');
-const { createConnector, createCRUD } = require('./index');
+const { createConnector, createCRUD, getConnectionURL } = require('./');
+
+describe('getConnectionURL', () => {
+
+  it('returns a connection URL without username, password and database', async () => {
+    const actualURL = getConnectionURL({ host: 'a-host', port: '12345'});
+
+    expect(actualURL).to.be.equal('mongodb://a-host:12345');    
+  });
+
+  it('returns a connection URL with username, password and database', async () => {
+    const actualURL = getConnectionURL({
+      host: 'a-host',
+      port: '12345',
+      username: 'a user',
+      password: 'pass#code',
+      database: 'a-database',
+    });
+
+    expect(actualURL).to.be.equal('mongodb://a%20user:pass%23code@a-host:12345/a-database');    
+  });
+});
 
 describe('createConnector', () => {
 
@@ -52,12 +73,33 @@ describe('createConnector', () => {
     const connector = createConnector();
     const conn = await connector();
 
-    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017');
+    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017/admin');
     expect(await conn.isConnected()).to.be.true;
 
     conn.close();
     delete process.env.DBUSER;
     delete process.env.DBPASS;
+    delete process.env.DBHOST;
+    delete process.env.DBPORT;
+  });
+
+  it('connects to host and port with authentication using database defined by env var when no argument is given', async () => {
+    process.env.DBUSER = 'admin';
+    process.env.DBPASS = 'pass';
+    process.env.DBNAME = 'admin';
+    process.env.DBHOST = '127.0.0.1';
+    process.env.DBPORT = '27017';
+
+    const connector = createConnector();
+    const conn = await connector();
+
+    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017/admin');
+    expect(await conn.isConnected()).to.be.true;
+
+    conn.close();
+    delete process.env.DBUSER;
+    delete process.env.DBPASS;
+    delete process.env.DBNAME;
     delete process.env.DBHOST;
     delete process.env.DBPORT;
   });
@@ -86,6 +128,7 @@ describe('createConnector', () => {
   it('connects to given host and port', async () => {
     process.env.DBHOST = 'dummyhost';
     process.env.DBPORT = '12345';
+    process.env.DBNAME = 'dummydb';
 
     const connector = createConnector({
       host: '127.0.0.1',
@@ -99,28 +142,59 @@ describe('createConnector', () => {
     conn.close();
     delete process.env.DBHOST;
     delete process.env.DBPORT;
+    delete process.env.DBNAME;
   });
 
   it('connects to given host and port with authentication', async () => {
     process.env.DBUSER = 'dummyuser';
     process.env.DBPASS = 'dummypass';
+    process.env.DBNAME = 'dummydb';
     process.env.DBHOST = 'dummyhost';
     process.env.DBPORT = '12345';
 
     const connector = createConnector({
       username: 'admin',
       password: 'pass',
+      database: 'admin',
       host: '127.0.0.1',
       port: 27017,
     });
     const conn = await connector();
 
-    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017');
+    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017/admin');
     expect(await conn.isConnected()).to.be.true;
 
     conn.close();
     delete process.env.DBUSER;
     delete process.env.DBPASS;
+    delete process.env.DBNAME;
+    delete process.env.DBHOST;
+    delete process.env.DBPORT;
+  });
+
+  it('connects to given host and port with authentication using database', async () => {
+    process.env.DBUSER = 'dummyuser';
+    process.env.DBPASS = 'dummypass';
+    process.env.DBNAME = 'dummydb';
+    process.env.DBHOST = 'dummyhost';
+    process.env.DBPORT = '12345';
+
+    const connector = createConnector({
+      username: 'admin',
+      password: 'pass',
+      database: 'admin',
+      host: '127.0.0.1',
+      port: 27017,
+    });
+    const conn = await connector();
+
+    expect(conn.s.url).to.be.equal('mongodb://admin:pass@127.0.0.1:27017/admin');
+    expect(await conn.isConnected()).to.be.true;
+
+    conn.close();
+    delete process.env.DBUSER;
+    delete process.env.DBPASS;
+    delete process.env.DBNAME;
     delete process.env.DBHOST;
     delete process.env.DBPORT;
   });
@@ -168,14 +242,53 @@ describe('createCRUD', () => {
     await connector();
   });
 
-  const crud = createCRUD(connector, 'test', 'test');
-
   it('returns an object of CRUD functions', () => {
-    expect(crud).to.have.property('create').that.is.a('function');
-    expect(crud).to.have.property('read').that.is.a('function');
-    expect(crud).to.have.property('update').that.is.a('function');
-    expect(crud).to.have.property('delete').that.is.a('function');
+    const testCRUD = createCRUD(connector, 'test', 'test');
+
+    expect(testCRUD).to.have.property('create').that.is.a('function');
+    expect(testCRUD).to.have.property('read').that.is.a('function');
+    expect(testCRUD).to.have.property('update').that.is.a('function');
+    expect(testCRUD).to.have.property('delete').that.is.a('function');
   });
+
+  it('returns an object of CRUD functions when connector is omitted', () => {
+    const testCRUD = createCRUD({ database: 'test', collection: 'test' });
+
+    expect(testCRUD).to.have.property('create').that.is.a('function');
+    expect(testCRUD).to.have.property('read').that.is.a('function');
+    expect(testCRUD).to.have.property('update').that.is.a('function');
+    expect(testCRUD).to.have.property('delete').that.is.a('function');
+  });
+
+  it('returns an object of CRUD functions when connector and database is omitted and env var DBNAME is set', () => {
+    process.env.DBNAME = 'test';
+
+    const testCRUD = createCRUD({ collection: 'test' });
+
+    expect(testCRUD).to.have.property('create').that.is.a('function');
+    expect(testCRUD).to.have.property('read').that.is.a('function');
+    expect(testCRUD).to.have.property('update').that.is.a('function');
+    expect(testCRUD).to.have.property('delete').that.is.a('function');
+
+    delete process.env.DBNAME;
+  });
+
+  it('throws if database is not given', () => {
+    const expectedMessage = 'Must provide the database name to create a CRUD';
+
+    expect(() => createCRUD({ collection: 'test' })).to.throw(TypeError, expectedMessage);
+    expect(() => createCRUD({ collection: 'test', database: ' ' })).to.throw(TypeError, expectedMessage)
+  });
+  
+  it('throws if collection is not given', () => {
+    const expectedMessage = 'Must provide the collection name to create a CRUD';
+
+    expect(() => createCRUD({ database: 'test' })).to.throw(TypeError, expectedMessage);
+    expect(() => createCRUD({ collection: ' ', database: 'test' })).to.throw(TypeError, expectedMessage);
+    expect(() => createCRUD(connector, 'test')).to.throw(TypeError, expectedMessage);
+  });
+
+  const crud = createCRUD(connector, 'test', 'test');
 
   let _id;
 
