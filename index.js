@@ -52,6 +52,7 @@ exports.createCRUD = exports.createCrud = (connector, database, collection) => {
         op = updateMany;
         args = [queryOrDocOrId, { $set: docFragment }];
       }
+      delete docFragment._id;
 
       return (await op(...args)).modifiedCount;
     },
