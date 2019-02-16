@@ -4,16 +4,15 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Run Tests",
+      "name": "Tests",
       "stopOnEntry": false,
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "cwd": "${workspaceRoot}",
-      "runtimeExecutable": "yarn",
-      "runtimeArgs": [
-        "test"
+      "args": [
+        "--colors",
+        "*.test.js"
       ],
-      "env": {
-        "NODE_ENV": "test"
-      }
+      "internalConsoleOptions": "openOnSessionStart",
     }
   ]
 }
