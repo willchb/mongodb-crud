@@ -127,7 +127,7 @@ If you want a persistent connection for any operation that is not part of the
 Here's how you'd create a new user in the database:
 
 ```js
-const { createConnector } = require('mongodb-crud');
+const { createConnector } = require('@midion/mongodb-crud');
 
 const connector = createConnector({ url: 'mongodb://user:pass@host:port' });
 const conn = await connector();
@@ -148,7 +148,7 @@ for each [collection] you want to [create] documents in, [read] documents from,
 
 
 ```js
-const { createConnector, createCRUD } = require('mongodb-crud');
+const { createConnector, createCRUD } = require('@midion/mongodb-crud');
 
 const connector = createConnector({ url: 'mongodb://user:pass@host:port' });
 
@@ -170,7 +170,7 @@ If you set the environment variables `DBUSER`, `DBPASS`, `DBNAME`, `DBHOST` and
 creating a crud could be as simple as in the below code snippet:
 
 ```js
-const { createCRUD } = require('mongodb-crud');
+const { createCRUD } = require('@midion/mongodb-crud');
 const crud = createCRUD({ collection: 'users' });
 ```
 
@@ -310,7 +310,7 @@ Create a document in the `users` collection of the `my-app-db` database. Then
 obtain it, modify it, save it, and finally delete it from the database.
 
 ```js
-const { createConnector, createCRUD } = require('mongodb-crud');
+const { createConnector, createCRUD } = require('@midion/mongodb-crud');
 const connector = createConnector({ url: 'mongodb://user:pass@host:port/database' });
 const crud = createCRUD(connector, 'my-app-db', 'users');
 
