@@ -13,9 +13,7 @@ An easy to use [CRUD] for [MongoDB].
 > code to start, jump to the [Complete sample] section. If after looking at the
 > [complete sample] you still have questions, then read this whole document.
 
-<h2 id="introduction">
-  Introduction
-</h2>
+## Introduction
 
 This package provides methods to [create], [read], [update] and [delete]
 documents in a [MongoDB] database.
@@ -23,9 +21,7 @@ documents in a [MongoDB] database.
 In short, you [create a connector] and use it to [create a crud] for a specific [database] and [collection]. Then you call any of the four methods of the crud
 you created to perform any of the four [CRUD] operations.
 
-<h2 id="create-a-connector">
-  Create a connector
-</h2>
+## Create a connector
 
 First thing you need is a connector. A connector is a method that returns a
 persistent connection to a [MongoDB] host. The connector is required to
@@ -135,9 +131,7 @@ const conn = await connector();
 await conn.db('admin').addUser('newuser', 's3cr3t');
 ```
 
-<h2 id="create-a-crud">
-  Create a CRUD
-</h2>
+## Create a CRUD
 
 Once you have a connector, you need to create a crud, which is just a plain
 object with these methods: [create], [read], [update], [delete].
@@ -174,9 +168,7 @@ const { createCRUD } = require('@midion/mongodb-crud');
 const crud = createCRUD({ collection: 'users' });
 ```
 
-<h2 id="create-a-document">
-  Create a document
-</h2>
+## Create a document
 
 Once you have [a crud] for your [database] and [collection], you just need to
 call the method `create` with a plain object representing the document you
@@ -199,9 +191,7 @@ const document = {
 const _id = await crud.create(document);
 ```
 
-<h2 id="read-a-document">
-  Read a document
-</h2>
+## Read a document
 
 Assuming you have [a crud] for your [database] and [collection], you obtain a
 document from that [collection] by calling the method `read` with the
@@ -234,9 +224,7 @@ const documents = await crud.read({}, {
 });
 ```
 
-<h2 id="update-a-document">
-  Update a document
-</h2>
+## Update a document
 
 If you need to update a document in a [collection], get [a crud] for that
 [collection], then [read] the document by `_id`, change it, and call `update`
@@ -273,9 +261,7 @@ const modifiedCount = await crud.update(
 );
 ```
 
-<h2 id="delete-a-document">
-  Delete a document
-</h2>
+## Delete a document
 
 You have [a crud] for your [database] and [collection], then you could delete a
 document from that [collection] by calling the method `delete` with the
@@ -302,9 +288,7 @@ You could also delete multiple documents by a certain criteria.
 const deletedCount = await crud.delete({ name: 'John' });
 ```
 
-<h2 id="complete-sample">
-  Complete sample
-</h2>
+## Complete sample
 
 Create a document in the `users` collection of the `my-app-db` database. Then
 obtain it, modify it, save it, and finally delete it from the database.
