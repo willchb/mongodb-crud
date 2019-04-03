@@ -288,7 +288,7 @@ You could also delete multiple documents by a certain criteria.
 const deletedCount = await crud.delete({ name: 'John' });
 ```
 
-## Complete sample
+<h2>Complete sample</h2>
 
 Create a document in the `users` collection of the `my-app-db` database. Then
 obtain it, modify it, save it, and finally delete it from the database.
