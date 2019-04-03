@@ -13,7 +13,7 @@ An easy to use [CRUD] for [MongoDB].
 > code to start, jump to the [Complete sample] section. If after looking at the
 > [complete sample] you still have questions, then read this whole document.
 
-<h2 id="introduction">
+<h2 id="custom-introduction">
   Introduction
 </h2>
 
@@ -23,7 +23,7 @@ documents in a [MongoDB] database.
 In short, you [create a connector] and use it to [create a crud] for a specific [database] and [collection]. Then you call any of the four methods of the crud
 you created to perform any of the four [CRUD] operations.
 
-<h2 id="create-a-connector">
+<h2 id="custom-create-a-connector">
   Create a connector
 </h2>
 
@@ -135,7 +135,7 @@ const conn = await connector();
 await conn.db('admin').addUser('newuser', 's3cr3t');
 ```
 
-<h2 id="create-a-crud">
+<h2 id="custom-create-a-crud">
   Create a CRUD
 </h2>
 
@@ -174,7 +174,7 @@ const { createCRUD } = require('@midion/mongodb-crud');
 const crud = createCRUD({ collection: 'users' });
 ```
 
-<h2 id="create-a-document">
+<h2 id="custom-create-a-document">
   Create a document
 </h2>
 
@@ -199,7 +199,7 @@ const document = {
 const _id = await crud.create(document);
 ```
 
-<h2 id="read-a-document">
+<h2 id="custom-read-a-document">
   Read a document
 </h2>
 
@@ -234,7 +234,7 @@ const documents = await crud.read({}, {
 });
 ```
 
-<h2 id="update-a-document">
+<h2 id="custom-update-a-document">
   Update a document
 </h2>
 
@@ -273,7 +273,7 @@ const modifiedCount = await crud.update(
 );
 ```
 
-<h2 id="delete-a-document">
+<h2 id="custom-delete-a-document">
   Delete a document
 </h2>
 
@@ -302,7 +302,7 @@ You could also delete multiple documents by a certain criteria.
 const deletedCount = await crud.delete({ name: 'John' });
 ```
 
-<h2 id="complete-sample">
+<h2 id="custom-complete-sample">
   Complete sample
 </h2>
 
